@@ -34,34 +34,30 @@ module.exports = NodeHelper.create({
    * This has the real call to Minecraft.  See https://www.npmjs.com/package/minecraft-ping
    */
   socketNotificationReceived: function (notification, payload) {
-    // if (notification === "MINECRAFT_PING") {
-    //   // console.log("[MinecraftStatus] MCPinging " + payload.hostname + ":" + payload.port);
-    //   var arg = { host: payload.hostname, port: payload.port };
-    //   var startTime = new Date();
-    //   var helper = this;
-    //   mp.ping_fe01(arg, function (err, resp) {
-    //     if (err) {
-    //       helper.sendSocketNotification("MINECRAFT_ERROR", {
-    //         identifier: payload.identifier,
-    //         message: helper.minecraftError2text(err),
-    //       });
-    //     } else {
-    //       var timeSec = new Date() - startTime;
-    //       var playerCount = resp.numPlayers
-    //         ? resp.numPlayers
-    //         : resp.playersOnline;
-    //       helper.sendSocketNotification("MINECRAFT_UPDATE", {
-    //         identifier: payload.identifier,
-    //         players: playerCount,
-    //         latency: timeSec,
-    //       });
-    //     }
-    //   });
-    // }
-    if (notification === "MINECRAFT_SERVER_PLAYER_LIST") {
-      //   console.log(
-      //     "[MinecraftStatus] MCPinging " + payload.hostname + ":" + payload.port
-      //   );
+    if (notification === "MINECRAFT_PING") {
+      // console.log("[MinecraftStatus] MCPinging " + payload.hostname + ":" + payload.port);
+      var arg = { host: payload.hostname, port: payload.port };
+      var startTime = new Date();
+      var helper = this;
+      mp.ping_fe01(arg, function (err, resp) {
+        if (err) {
+          helper.sendSocketNotification("MINECRAFT_ERROR", {
+            identifier: payload.identifier,
+            message: helper.minecraftError2text(err),
+          });
+        } else {
+          var timeSec = new Date() - startTime;
+          var playerCount = resp.numPlayers
+            ? resp.numPlayers
+            : resp.playersOnline;
+          helper.sendSocketNotification("MINECRAFT_UPDATE", {
+            identifier: payload.identifier,
+            players: playerCount,
+            latency: timeSec,
+          });
+        }
+      });
+    } else if (notification === "MINECRAFT_SERVER_PLAYER_LIST") {
       var parameters = { host: payload.hostname, port: payload.port };
       var startTime = new Date();
       var helper = this;
@@ -70,7 +66,7 @@ module.exports = NodeHelper.create({
         .then(function (response) {
           let playerListData;
           if (typeof response.data.players.list === "undefined") {
-            playerListData = "No Players online";
+            playerListData = "0";
           } else playerListData = response.data.players.list;
           //   console.log(response.data.players.list);
           helper.sendSocketNotification("MINECRAFT_PLAYER_LIST_UPDATE", {

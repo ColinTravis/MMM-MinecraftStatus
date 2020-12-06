@@ -87,8 +87,9 @@ Module.register("MMM-MinecraftStatus", {
     );
     this.playerListDiv = this.createMetricPanel(
       this.successTbody,
-      "players",
-      this.translate("players online")
+      "users",
+      this.translate("players online"),
+      "playerList"
     );
     // this.latencyDiv = this.createMetricPanel(this.successTbody, "clock-o", this.translate("latency"));
 
@@ -118,16 +119,19 @@ Module.register("MMM-MinecraftStatus", {
    * Helper method called exclusively by getDom() above.  This draws either the
    * Players row with icon and number, or the Latency row with number and icon.
    */
-  createMetricPanel: function (parent, fontAwesomeName, label) {
+  createMetricPanel: function (parent, fontAwesomeName, label, cssClass) {
     var row = this.createEle(parent, "tr");
+    let className = "value";
     this.createEle(
       row,
       "td",
       "iconbox",
       "<i class='fa fa-" + fontAwesomeName + " fa-fw'></i>"
     );
-
-    var value = this.createEle(row, "td", "value", "?");
+    if (cssClass) {
+      className = cssClass;
+    }
+    var value = this.createEle(row, "td", className, "?");
     this.createEle(row, "td", "label", label.replace(" ", "&nbsp;"));
     return value;
   },
@@ -244,7 +248,7 @@ Module.register("MMM-MinecraftStatus", {
       switch (notification) {
         case "MINECRAFT_UPDATE":
           var currPlayers = parseInt(payload.players); // just being safe
-console.log("PLAYERS ONLINE", payload)
+          //   console.log("PLAYERS ONLINE", payload);
           this.playersDiv.innerHTML = currPlayers;
           // this.latencyDiv.innerHTML = payload.latency;
           this.successTbody.style.display = "block";
@@ -278,14 +282,17 @@ console.log("PLAYERS ONLINE", payload)
           }
           break;
         case "MINECRAFT_PLAYER_LIST_UPDATE":
-        console.log("PLAYER LIST", payload);
-        //   var playerList = payload.playerList; // just being safe
+        //   console.log("PLAYER LIST", payload);
+          var playerList = payload.playerList;
+          if (playerList === "0") {
+            this.playerListDiv.innerHTML = playerList;
+          } else {
+            this.playerListDiv.innerHTML = playerList.join("<br/>");
+          }
+          this.successTbody.style.display = "block";
+          this.errorTbody.style.display = "none";
 
-        //   this.playerListDiv.innerHTML = playerList;
-        //   this.successTbody.style.display = "block";
-        //   this.errorTbody.style.display = "none";
-
-        //   this.lastPingPlayerList = playerList;
+          this.lastPingPlayerList = playerList;
           break;
       }
     }
