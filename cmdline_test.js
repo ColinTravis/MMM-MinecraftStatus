@@ -17,15 +17,39 @@
  *             maxPlayers: 10
  *         }
  */
+var axios = require("axios");
+
+console.log("Querying " + process.argv[2] + ":" + process.argv[3]);
+var parameters = { host: process.argv[2], port: process.argv[3] };
+axios
+  .get(`https://api.mcsrvstat.us/2/${parameters.host}:${parameters.port}`)
+  .then(function (response) {
+    let playerList = "no players";
+    if (typeof response.data.players.list === "undefined") {
+      playerList = "No Players online";
+    } else (playerList = response.data.players.list)
+    console.log(playerList);
+  });
+
+//    var timeSec = new Date() - startTime;
+//    var playerCount = resp.numPlayers
+//      ? resp.numPlayers
+//      : resp.playersOnline;
+//    helper.sendSocketNotification("MINECRAFT_UPDATE", {
+//      identifier: payload.identifier,
+//      players: playerCount,
+//      latency: timeSec,
+//    });
+
 var mcp = require("minecraft-ping");
 
-console.log("MSPinging " + process.argv[2] + ":" + process.argv[3]);
-mcp.ping_fe01({
-    host: process.argv[2],
-    port: process.argv[3]
-},
-function(err, response) {
-    console.log("Results:");
-    console.log("   Error = " + JSON.stringify(err, null, 2));
-    console.log("   Data  = " + JSON.stringify(response, null, 2));
-});
+// console.log("MSPinging " + process.argv[2] + ":" + process.argv[3]);
+// mcp.ping_fe01({
+//     host: process.argv[2],
+//     port: process.argv[3]
+// },
+// function(err, response) {
+//     console.log("Results:");
+//     console.log("   Error = " + JSON.stringify(err, null, 2));
+//     console.log("   Data  = " + JSON.stringify(response, null, 2));
+// });

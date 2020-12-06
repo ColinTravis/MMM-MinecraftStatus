@@ -18,6 +18,7 @@
         "Minecraft"
     ],
     "dependencies": {
+        "axios": "^0.21.0",
         "minecraft-ping": "1.0.0",
         "npm": "^6.4.1"
     },
