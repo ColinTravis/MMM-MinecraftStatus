@@ -1,4 +1,5 @@
 # MMM-MinecraftStatus
+**This is a fork of that adds server querying to show a list of players, using the "Minecraft Server Status" API. [mcsrvstat](https://mcsrvstat.us/)**
 
 A [MagicMirror²](https://magicmirror.builders) module to ping a remote Minecraft server and report how many players are currently on.  If the server can't be reached, this displays an alert.
 
