@@ -9,6 +9,7 @@
 var NodeHelper = require("node_helper");
 var mp = require("minecraft-ping");
 var axios = require("axios");
+var minecraftStatus = require("minecraft-server-status");
 
 module.exports = NodeHelper.create({
   // Override start method.
@@ -61,19 +62,26 @@ module.exports = NodeHelper.create({
       var parameters = { host: payload.hostname, port: payload.port };
       var startTime = new Date();
       var helper = this;
-      axios
-        .get(`https://api.mcsrvstat.us/2/${parameters.host}:${parameters.port}`)
-        .then(function (response) {
-          let playerListData;
-          if (typeof response.data.players.list === "undefined") {
-            playerListData = "0";
-          } else playerListData = response.data.players.list;
-          //   console.log(response.data.players.list);
+      minecraftStatus(parameters.host, parameters.port, (response) => {
+        let playerListData = [];
+        if (
+          !Array.isArray(response.players.sample) ||
+          !response.players.sample.length
+        ) {
+          playerListData = "0";
+          // console.log(playerListData);
+        } else {
+          playerListData = response.players.sample;
+          // playerListData.map(function (player) {
+          //   return (playerListData = player.name);
+          // });
+          // console.log(playerListData);
+        }
           helper.sendSocketNotification("MINECRAFT_PLAYER_LIST_UPDATE", {
             identifier: payload.identifier,
             playerList: playerListData,
           });
-        });
+      });
     }
   },
 

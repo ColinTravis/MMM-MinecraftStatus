@@ -282,11 +282,14 @@ Module.register("MMM-MinecraftStatus", {
           }
           break;
         case "MINECRAFT_PLAYER_LIST_UPDATE":
-        //   console.log("PLAYER LIST", payload);
-          var playerList = payload.playerList;
-          if (playerList === "0") {
+          let playerListData = payload.playerList;
+          let playerList = 0;
+          if (playerListData === "0") {
             this.playerListDiv.innerHTML = playerList;
           } else {
+            playerList = playerListData.map(function (player) {
+              return player.name;
+            });
             this.playerListDiv.innerHTML = playerList.join("<br/>");
           }
           this.successTbody.style.display = "block";

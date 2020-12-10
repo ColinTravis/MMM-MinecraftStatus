@@ -19,20 +19,29 @@
  */
 var axios = require("axios");
 var mcp = require("minecraft-ping");
+var minecraftStatus = require("minecraft-server-status");
 
 if (process.argv[2] === "list") {
   console.log("Querying " + process.argv[3] + ":" + process.argv[4]);
   var parameters = { host: process.argv[3], port: process.argv[4] };
-  axios
-    .get(`https://api.mcsrvstat.us/2/${parameters.host}:${parameters.port}`)
-    .then(function (response) {
-      let playerList = "no players";
-      if (typeof response.data.players.list === "undefined") {
-        playerList = "No Players online";
-      } else playerList = response.data.players.list;
+  minecraftStatus(parameters.host, parameters.port, (response) => {
+    let playerList = "no players";
+    if (
+      response.players.sample === undefined ||
+      response.players.sample.length == 0
+    ) {
+      playerList = "No Players online";
       console.log(playerList);
-    });
-} else if(process.argv[2] === "number") {
+    } else {
+      playerList = response.players.sample;
+      
+      playerList.map(function (player) {
+        return  playerList = player.name ;
+      });
+      console.log(playerList);
+    }
+  });
+} else if (process.argv[2] === "number") {
   console.log("MSPinging " + process.argv[3] + ":" + process.argv[4]);
   mcp.ping_fe01(
     {
